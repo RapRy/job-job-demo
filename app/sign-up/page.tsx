@@ -1,23 +1,96 @@
-import Link from "next/link"
-import InputField from "@/components/forms/InputField"
-import CustomButton from "@/components/CustomButton"
-import HorizontalDivider from "@/components/HorizontalDivider"
-import Image from "next/image"
+"use client";
+import Link from "next/link";
+import InputField from "@/components/forms/InputField";
+import CustomButton from "@/components/CustomButton";
+import HorizontalDivider from "@/components/HorizontalDivider";
+import Image from "next/image";
+import { useFormik, FormikProvider } from "formik";
+import * as Yup from "yup";
+import { useGoogleLogin } from "@react-oauth/google";
 
-export default function SignUp(){
-    return <div className="h-screen w-screen flex justify-center items-center bg-background p-5">
-        <div className="bg-white rounded-lg max-w-md min-w-2xs w-full p-8 lg:p-12 shadow-sm">
+const SignUpSchema = Yup.object().shape({
+  email: Yup.string().email().required("Required."),
+  password: Yup.string().required("Required."),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), undefined], "Passwords must match")
+    .required("Required."),
+});
+
+export default function SignUp() {
+  const formik = useFormik({
+    validationSchema: SignUpSchema,
+    validateOnBlur: false,
+    validateOnChange: false,
+    initialValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    onSubmit: async (values) => {
+      console.log(values);
+      await fetch(`${process.env.NEXT_PUBLIC_API_URI}/auth/sign-up`, {
+        method: "POST",
+        body: JSON.stringify({ ...values, is_google: false }),
+      });
+    },
+  });
+
+  const signUpGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URI}/auth/google`,
+        {
+          method: "POST",
+          body: JSON.stringify({ code: tokenResponse }),
+        }
+      );
+
+      const data = await res.json();
+
+      console.log(data);
+    },
+    flow: "auth-code",
+  });
+
+  return (
+    <div className="h-screen w-screen flex justify-center items-center bg-background p-5">
+      <div className="bg-white rounded-lg max-w-md min-w-2xs w-full p-8 lg:p-12 shadow-sm">
         <h1 className="custom-heading-1">Sign Up</h1>
-        <p className="mb-7">Already have an account? <Link href="/sign-in">Login your account</Link></p>
-        <InputField label="Email" name="email" type="email" />
-        <InputField label="Password" name="password" type="password" />
-        <InputField label="Confirm Password" name="confirm-password" type="password" />
-        <CustomButton bgColor="bg-primary-color" hoverBgColor="bg-secondary-color" text="Create" />
+        <p className="mb-7">
+          Already have an account?{" "}
+          <Link href="/sign-in">Login your account</Link>
+        </p>
+        <FormikProvider value={formik}>
+          <form onSubmit={formik.handleSubmit}>
+            <InputField label="Email" name="email" type="email" />
+            <InputField label="Password" name="password" type="password" />
+            <InputField
+              label="Confirm Password"
+              name="confirmPassword"
+              type="password"
+            />
+            <CustomButton
+              bgColor="bg-primary-color"
+              hoverBgColor="bg-secondary-color"
+              text="Create"
+              type="submit"
+            />
+          </form>
+        </FormikProvider>
         <HorizontalDivider text="or Sign Up using" />
-        <button className="flex justify-center items-center w-xl gap-2 border-background border-solid border rounded-sm mx-auto px-10 py-2">
-            <Image src="/google-logo.png" width={30} height={30} alt="google logo" />
-            <span className="font-bold text-sm">Google</span>
+        <button
+          className="flex justify-center items-center w-xl gap-2 border-background border-solid border rounded-sm mx-auto px-10 py-2"
+          onClick={() => signUpGoogle()}
+        >
+          <Image
+            src="/google-logo.png"
+            width={30}
+            height={30}
+            alt="google logo"
+          />
+          <span className="font-bold text-sm">Google</span>
         </button>
-        </div>
+      </div>
     </div>
+  );
 }

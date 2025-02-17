@@ -6,6 +6,7 @@ type Props = {
   textColor?: string;
   text: string;
   type?: "submit" | "reset" | "button";
+  loading?: boolean;
 };
 
 const CustomButton = ({
@@ -14,11 +15,13 @@ const CustomButton = ({
   text,
   textColor = "text-white",
   type = "button",
+  loading,
 }: Props) => {
   return (
     <button
       type={type}
       className={`${bgColor} hover:${hoverBgColor} px-6 py-2.5 rounded-sm text-sm ${textColor} font-bold`}
+      disabled={loading ?? false}
     >
       {text}
     </button>
