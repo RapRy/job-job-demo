@@ -7,11 +7,9 @@ export async function POST(req: NextRequest) {
   try {
     await connectToMongoDB();
 
-    const { email, confirmPassword } = await req.json();
+    const { email, confirmPassword, isGoogle } = await req.json();
 
     const userExist = await User.findOne({ email: email });
-
-    console.log(userExist);
 
     if (userExist)
       return new NextResponse(
@@ -29,19 +27,21 @@ export async function POST(req: NextRequest) {
         last: "",
       },
       email,
-      password: hashedPassword,
+      password: isGoogle ? "" : hashedPassword,
       accountType: "CANDIDATE",
       sign_up_date: new Date().toUTCString(),
-      is_google: false,
+      is_google: isGoogle,
     });
 
     return new NextResponse(
-      JSON.stringify({ message: `${email} successfully registered.` }),
+      JSON.stringify({
+        message: `${email} successfully registered.`,
+      }),
       {
         status: 200,
       }
     );
-  } catch (error) {
+  } catch {
     return new NextResponse(
       JSON.stringify({ message: "Internal Server Error" }),
       {

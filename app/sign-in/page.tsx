@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/forms/InputField";
 import HorizontalDivider from "@/components/HorizontalDivider";
@@ -6,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useFormik, FormikProvider } from "formik";
 import * as Yup from "yup";
+import toast from "react-hot-toast";
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required."),
@@ -13,6 +15,35 @@ const SignInSchema = Yup.object().shape({
 });
 
 export default function SignIn() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const signInFetch = async (values: { email: string; password: string }) => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URI}/auth/sign-in`,
+        {
+          method: "POST",
+          body: JSON.stringify(values),
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.status !== 200) {
+        throw new Error(data?.message);
+      } else {
+        return data.email;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error.message;
+      } else {
+        throw error;
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   const formik = useFormik({
     validationSchema: SignInSchema,
     initialValues: {
@@ -20,7 +51,11 @@ export default function SignIn() {
       password: "",
     },
     onSubmit: (values) => {
-      console.log(values);
+      toast.promise(signInFetch(values), {
+        loading: "Loading",
+        success: (data) => `Authenticated as ${data}`,
+        error: (err) => err.toString(),
+      });
     },
   });
 
@@ -40,6 +75,7 @@ export default function SignIn() {
               hoverBgColor="bg-secondary-color"
               text="Sign In"
               type="submit"
+              loading={loading}
             />
           </form>
         </FormikProvider>

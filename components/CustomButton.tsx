@@ -20,7 +20,9 @@ const CustomButton = ({
   return (
     <button
       type={type}
-      className={`${bgColor} hover:${hoverBgColor} px-6 py-2.5 rounded-sm text-sm ${textColor} font-bold`}
+      className={`${
+        loading ? "bg-foreground" : bgColor
+      } hover:${hoverBgColor} px-6 py-2.5 rounded-sm text-sm ${textColor} font-bold`}
       disabled={loading ?? false}
     >
       {text}

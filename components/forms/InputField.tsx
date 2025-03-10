@@ -43,6 +43,7 @@ const InputField = ({ type, label, name }: Props) => {
         }`}
         name={name}
         onChange={field.onChange}
+        value={field.value}
       />
       {meta.error && <p className="text-warning text-xs">{meta.error}</p>}
     </div>

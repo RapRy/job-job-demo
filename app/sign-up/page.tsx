@@ -7,6 +7,8 @@ import Image from "next/image";
 import { useFormik, FormikProvider } from "formik";
 import * as Yup from "yup";
 import { useGoogleLogin } from "@react-oauth/google";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 const SignUpSchema = Yup.object().shape({
   email: Yup.string().email().required("Required."),
@@ -17,6 +19,42 @@ const SignUpSchema = Yup.object().shape({
 });
 
 export default function SignUp() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const signUpFetch = async (values: {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    isGoogle: boolean;
+  }) => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URI}/auth/sign-up`,
+        {
+          method: "POST",
+          body: JSON.stringify(values),
+        }
+      );
+
+      const { message } = await res.json();
+
+      if (res.status !== 200) {
+        throw new Error(message);
+      } else {
+        return message;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error.message;
+      } else {
+        throw error;
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const formik = useFormik({
     validationSchema: SignUpSchema,
     validateOnBlur: false,
@@ -26,28 +64,51 @@ export default function SignUp() {
       password: "",
       confirmPassword: "",
     },
-    onSubmit: async (values) => {
-      console.log(values);
-      await fetch(`${process.env.NEXT_PUBLIC_API_URI}/auth/sign-up`, {
-        method: "POST",
-        body: JSON.stringify({ ...values, is_google: false }),
+    onSubmit: async (values, { resetForm }) => {
+      toast.promise(signUpFetch({ ...values, isGoogle: false }), {
+        loading: "Loading",
+        success: (data) => {
+          resetForm({
+            values: { email: "", password: "", confirmPassword: "" },
+          });
+          return `${data}`;
+        },
+        error: (err) => err.toString(),
       });
     },
   });
 
   const signUpGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URI}/auth/google`,
-        {
-          method: "POST",
-          body: JSON.stringify({ code: tokenResponse }),
-        }
-      );
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URI}/auth/google`,
+          {
+            method: "POST",
+            body: JSON.stringify({ code: tokenResponse }),
+          }
+        );
 
-      const data = await res.json();
+        const data = await res.json();
 
-      console.log(data);
+        toast.promise(
+          signUpFetch({
+            confirmPassword: "",
+            password: "",
+            email: data.email,
+            isGoogle: true,
+          }),
+          {
+            loading: "Loading",
+            success: (data) => `${data}`,
+            error: (err) => err.toString(),
+          }
+        );
+      } catch {
+      } finally {
+        setLoading(false);
+      }
     },
     flow: "auth-code",
   });
@@ -74,13 +135,14 @@ export default function SignUp() {
               hoverBgColor="bg-secondary-color"
               text="Create"
               type="submit"
+              loading={loading}
             />
           </form>
         </FormikProvider>
         <HorizontalDivider text="or Sign Up using" />
         <button
-          className="flex justify-center items-center w-xl gap-2 border-background border-solid border rounded-sm mx-auto px-10 py-2"
-          onClick={() => signUpGoogle()}
+          className={`flex justify-center items-center w-xl gap-2 border-background border-solid border rounded-sm mx-auto px-10 py-2`}
+          onClick={loading ? () => {} : () => signUpGoogle()}
         >
           <Image
             src="/google-logo.png"
