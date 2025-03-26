@@ -7,7 +7,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useFormik, FormikProvider } from "formik";
 import * as Yup from "yup";
+import { useGoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
+import { UserCredModel } from "@/lib/models/users/usermodel";
+import { useBoundStore } from "@/store/store";
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required."),
@@ -15,8 +18,14 @@ const SignInSchema = Yup.object().shape({
 });
 
 export default function SignIn() {
+  const { user, setUser } = useBoundStore();
+  console.log(user);
   const [loading, setLoading] = useState<boolean>(false);
-  const signInFetch = async (values: { email: string; password: string }) => {
+  const signInFetch = async (values: {
+    email: string;
+    password: string;
+    isGoogle: boolean;
+  }): Promise<UserCredModel> => {
     try {
       setLoading(true);
       const res = await fetch(
@@ -32,7 +41,8 @@ export default function SignIn() {
       if (res.status !== 200) {
         throw new Error(data?.message);
       } else {
-        return data.email;
+        setUser(data);
+        return data;
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -51,12 +61,47 @@ export default function SignIn() {
       password: "",
     },
     onSubmit: (values) => {
-      toast.promise(signInFetch(values), {
+      toast.promise(signInFetch({ ...values, isGoogle: false }), {
         loading: "Loading",
-        success: (data) => `Authenticated as ${data}`,
+        success: (data) => `Authenticated as ${data.email}`,
         error: (err) => err.toString(),
       });
     },
+  });
+
+  const signInGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setLoading(false);
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URI}/auth/google`,
+          {
+            method: "POST",
+            body: JSON.stringify({ code: tokenResponse }),
+          }
+        );
+
+        const data = await res.json();
+
+        toast.promise(
+          signInFetch({
+            email: data.email,
+            password: "",
+            isGoogle: true,
+          }),
+          {
+            loading: "Loading",
+            success: (data) => `Authenticated as ${data}`,
+            error: (err) => err.toString(),
+          }
+        );
+      } catch {
+      } finally {
+        setLoading(false);
+      }
+    },
+    flow: "auth-code",
   });
 
   return (
@@ -80,7 +125,10 @@ export default function SignIn() {
           </form>
         </FormikProvider>
         <HorizontalDivider text="or Sign In using" />
-        <button className="flex justify-center items-center w-xl gap-2 border-background border-solid border rounded-sm mx-auto px-10 py-2">
+        <button
+          className="flex justify-center items-center w-xl gap-2 border-background border-solid border rounded-sm mx-auto px-10 py-2"
+          onClick={loading ? () => {} : () => signInGoogle()}
+        >
           <Image
             src="/google-logo.png"
             width={30}

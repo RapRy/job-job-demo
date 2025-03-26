@@ -82,6 +82,7 @@ export default function SignUp() {
     onSuccess: async (tokenResponse) => {
       try {
         setLoading(true);
+        console.log(tokenResponse);
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URI}/auth/google`,
           {

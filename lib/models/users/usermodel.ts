@@ -12,6 +12,24 @@ export interface UserModel extends Document {
   sign_up_date: Date;
   last_sign_in_date: Date;
   is_google: boolean;
+  step: number;
+}
+
+export interface UserCredModel {
+  name: {
+    first: string;
+    last: string;
+  };
+  email: string;
+  account_type: string;
+  password: string;
+  picture: string;
+  sign_up_date: Date;
+  last_sign_in_date: Date;
+  is_google: boolean;
+  step: number;
+  _id: string;
+  token: string;
 }
 
 const userSchema = new mongoose.Schema<UserModel>({
@@ -48,6 +66,9 @@ const userSchema = new mongoose.Schema<UserModel>({
   },
   last_sign_in_date: {
     type: Date,
+  },
+  step: {
+    type: Number,
   },
 });
 

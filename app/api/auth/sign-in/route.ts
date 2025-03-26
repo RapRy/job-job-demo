@@ -8,29 +8,33 @@ export async function POST(req: NextRequest) {
   try {
     await connectToMongoDB();
 
-    const { email, password } = await req.json();
+    const { email, password, isGoogle } = await req.json();
 
     const user: UserModel | null = await User.findOne({ email });
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ message: "Invalid email or password." }),
+        JSON.stringify({
+          message: isGoogle ? "Invalid email" : "Invalid email or password.",
+        }),
         { status: 400 }
       );
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isGoogle) {
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordCorrect) {
-      return new NextResponse(
-        JSON.stringify({ message: "Invalid email or password." }),
-        { status: 400 }
-      );
+      if (!isPasswordCorrect) {
+        return new NextResponse(
+          JSON.stringify({ message: "Invalid email or password." }),
+          { status: 400 }
+        );
+      }
     }
 
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
-      { last_sign_in_date: new Date() },
+      { last_sign_in_date: new Date(), step: user.step ?? 1 },
       { useFindAndModify: false, new: true }
     );
 
