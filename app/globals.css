@@ -20,24 +20,47 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@layer base{
-  p{
+@layer base {
+  p {
     font-size: 14px;
   }
 
-  a{
-    color: #0496FF;
+  a {
+    color: #0496ff;
     text-decoration: underline;
     text-underline-offset: 3px;
 
-    &:hover{
+    &:hover {
       color: #0d47a1;
     }
   }
 }
 
-@layer utilities{
-  .custom-heading-1{
-    @apply text-secondary-color text-2xl font-bold mb-4 
+@layer utilities {
+  .custom-heading-1 {
+    @apply text-secondary-color text-2xl font-bold mb-4;
+  }
+}
+
+@layer components {
+  .quill-custom {
+    .ql-toolbar.ql-snow {
+      border: 1px solid #0d47a1;
+      border-top-left-radius: 2px;
+      border-top-right-radius: 2px;
+    }
+
+    .ql-container.ql-snow {
+      border: 1px solid #0d47a1;
+      border-bottom-left-radius: 2px;
+      border-bottom-right-radius: 2px;
+    }
+
+    &.quill-custom-error {
+      .ql-toolbar.ql-snow,
+      .ql-container.ql-snow {
+        border-color: #e63946;
+      }
+    }
   }
 }

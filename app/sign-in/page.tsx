@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/forms/InputField";
 import HorizontalDivider from "@/components/HorizontalDivider";
@@ -18,8 +19,8 @@ const SignInSchema = Yup.object().shape({
 });
 
 export default function SignIn() {
+  const route = useRouter();
   const { user, setUser } = useBoundStore();
-  console.log(user);
   const [loading, setLoading] = useState<boolean>(false);
   const signInFetch = async (values: {
     email: string;
@@ -61,11 +62,15 @@ export default function SignIn() {
       password: "",
     },
     onSubmit: (values) => {
-      toast.promise(signInFetch({ ...values, isGoogle: false }), {
-        loading: "Loading",
-        success: (data) => `Authenticated as ${data.email}`,
-        error: (err) => err.toString(),
-      });
+      toast
+        .promise(signInFetch({ ...values, isGoogle: false }), {
+          loading: "Loading",
+          success: (data) => `Authenticated as ${data.email}`,
+          error: (err) => err.toString(),
+        })
+        .then(() => {
+          route.push("/create-resume");
+        });
     },
   });
 
@@ -84,18 +89,22 @@ export default function SignIn() {
 
         const data = await res.json();
 
-        toast.promise(
-          signInFetch({
-            email: data.email,
-            password: "",
-            isGoogle: true,
-          }),
-          {
-            loading: "Loading",
-            success: (data) => `Authenticated as ${data}`,
-            error: (err) => err.toString(),
-          }
-        );
+        toast
+          .promise(
+            signInFetch({
+              email: data.email,
+              password: "",
+              isGoogle: true,
+            }),
+            {
+              loading: "Loading",
+              success: (data) => `Authenticated as ${data}`,
+              error: (err) => err.toString(),
+            }
+          )
+          .then(() => {
+            route.push("/create-resume");
+          });
       } catch {
       } finally {
         setLoading(false);
