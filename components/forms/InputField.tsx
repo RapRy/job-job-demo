@@ -6,16 +6,17 @@ type Props = {
   type?: string;
   label: string;
   name: string;
+  mb?: string
 };
 
-const InputField = ({ type, label, name }: Props) => {
+const InputField = ({ type, label, name, mb }: Props) => {
   const [field, meta] = useField(name);
   const [fieldType, setFieldType] = React.useState<string>(type ?? "text");
 
   const changeToTextType = (typeString: string) => setFieldType(typeString);
 
   return (
-    <div className="flex flex-col gap-y-2 mb-5">
+    <div className={`flex flex-col gap-y-2 mb-${mb ?? "5"}`}>
       <div className="flex flex-row justify-between">
         <label className="text-sm text-text-color-1 font-normal">{label}</label>
         {type === "password" && (

@@ -14,6 +14,7 @@ type Props = {
   isRead?: boolean;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
   setFieldError: (field: string, message: string | undefined) => void;
+  mb?: string
 };
 
 const RichTextField = ({
@@ -22,6 +23,7 @@ const RichTextField = ({
   isRead = false,
   setFieldError,
   setFieldValue,
+  mb
 }: Props) => {
   const [field, meta] = useField(name);
   const handleTextChange = (html: string) => {
@@ -29,19 +31,27 @@ const RichTextField = ({
     setFieldError(name, "");
   };
 
+  const modules = {
+    toolbar: {
+      container: `#${label?.replaceAll(" ", "-").toLowerCase()}-container`
+    }
+  }
+
   return (
     <div
-      className={`flex flex-col gap-y-2 mb-5 quill-custom ${
+      className={`flex flex-col gap-y-2 mb-${mb ?? "5"} quill-custom ${
         meta.error ? "quill-custom-error" : ""
       }`}
     >
       <label className="text-sm text-text-color-1 font-normal">{label}</label>
+      <div id={`${label?.replaceAll(" ", "-").toLowerCase()}-container`} />
       <ReactQuill
         theme="snow"
         value={field.value}
         placeholder=""
         onChange={isRead ? () => {} : handleTextChange}
         readOnly={isRead}
+        modules={modules}
       />
       {meta.error && <p className="text-warning text-xs">{meta.error}</p>}
     </div>
