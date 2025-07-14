@@ -42,25 +42,24 @@ body {
   }
 }
 
-@layer components {
-  .quill-custom {
-    .ql-toolbar.ql-snow {
-      border: 1px solid #0d47a1;
-      border-top-left-radius: 2px;
-      border-top-right-radius: 2px;
-    }
-
-    .ql-container.ql-snow {
-      border: 1px solid #0d47a1;
-      border-bottom-left-radius: 2px;
-      border-bottom-right-radius: 2px;
-    }
-
-    &.quill-custom-error {
-      .ql-toolbar.ql-snow,
-      .ql-container.ql-snow {
-        border-color: #e63946;
-      }
-    }
-  }
+.quill-custom .ql-toolbar.ql-snow {
+  border: 1px solid #0d47a1;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
 }
+
+.quill-custom .ql-container.ql-snow {
+  border: 1px solid #0d47a1;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.quill-custom .ql-container.ql-snow .ql-editor{
+  padding-left: .75rem;
+  padding-right: .75rem;
+}
+
+.quill-custom.quill-custom-error .ql-toolbar.ql-snow, .quill-custom.quill-custom-error .ql-container.ql-snow{
+  border-color: #e63946;
+}
+  

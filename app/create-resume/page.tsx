@@ -8,6 +8,22 @@ const resumeSchema = Yup.object().shape({
   firstName: Yup.string().required("Required."),
   lastName: Yup.string().required("Required."),
   about: Yup.string(),
+  // file: Yup.mixed<File>().required("Required").test('fileFormat', 'Only PDF files are allowed.', (value) => {
+  //   if(value.name){
+  //     const supFormat = ['pdf']
+  //     const nameToArray = value.name.split(".").pop()
+  //       return supFormat.includes(nameToArray as string);
+
+  //   }
+
+  //   return true
+  // }).test('fileSize', 'File size must be less than 3MB', (value) => {
+  //   if(value.size){
+  //     return value.size <= 3000000;
+  //   }
+
+  //   return true
+  // })
 });
 
 export default function CreateResume() {
@@ -19,8 +35,11 @@ export default function CreateResume() {
       firstName: "",
       lastName: "",
       about: "",
+      // file: null
     },
-    onSubmit: () => {},
+    onSubmit: (value) => {
+      console.log(value)
+    },
   });
 
   return (
@@ -43,7 +62,10 @@ export default function CreateResume() {
                   setFieldValue={formik.setFieldValue}
                 />
               </div>
+              {/* <input type="file" name="file" accept="*" onChange={formik.handleChange} />
+              <p>{ formik.errors.file }</p> */}
             </div>
+            <button type="submit">Submit and log</button>
           </form>
         </FormikProvider>
       </div>
