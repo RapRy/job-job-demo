@@ -7,6 +7,7 @@ type Props = {
   text: string;
   type?: "submit" | "reset" | "button";
   loading?: boolean;
+  customFn?: () => void;
 };
 
 const CustomButton = ({
@@ -16,6 +17,7 @@ const CustomButton = ({
   textColor = "text-white",
   type = "button",
   loading,
+  customFn,
 }: Props) => {
   return (
     <button
@@ -24,6 +26,7 @@ const CustomButton = ({
         loading ? "bg-foreground" : bgColor
       } hover:${hoverBgColor} px-6 py-2.5 rounded-sm text-sm ${textColor} font-bold`}
       disabled={loading ?? false}
+      onClick={type === "button" ? customFn : () => {}}
     >
       {text}
     </button>

@@ -4,18 +4,40 @@ import InputField from "@/components/forms/InputField";
 import RichTextField from "@/components/forms/RichTextField";
 import { useFormik, FormikProvider, FieldArray } from "formik";
 import * as Yup from "yup";
+import CustomButton from "@/components/CustomButton";
+import SelectField from "@/components/forms/SelectField";
 
 const resumeSchema = Yup.object().shape({
   firstName: Yup.string().required("Required."),
   lastName: Yup.string().required("Required."),
   about: Yup.string(),
-  experience: Yup.array().of(Yup.object().shape({
-    companyName: Yup.string().required("Required"),
-    position: Yup.string().required("Required"),
-    startDate: Yup.date().required("Required"),
-    endDate: Yup.date(),
-    description: Yup.string()
-  }))
+  experience: Yup.array().of(
+    Yup.object().shape({
+      id: Yup.string(),
+      companyName: Yup.string().required("Required"),
+      position: Yup.string().required("Required"),
+      startDate: Yup.date().required("Required"),
+      endDate: Yup.date(),
+      description: Yup.string(),
+    })
+  ),
+  skill: Yup.array().of(
+    Yup.object().shape({
+      id: Yup.string(),
+      name: Yup.string().required("Required"),
+      rate: Yup.number().required("Required"),
+    })
+  ),
+  education: Yup.array().of(
+    Yup.object().shape({
+      id: Yup.string(),
+      schoolName: Yup.string().required("Required"),
+      degree: Yup.string().required("Required"),
+      startDate: Yup.date().required("Required"),
+      endDate: Yup.date(),
+      description: Yup.string(),
+    })
+  ),
   // file: Yup.mixed<File>().required("Required").test('fileFormat', 'Only PDF files are allowed.', (value) => {
   //   if(value.name){
   //     const supFormat = ['pdf']
@@ -43,17 +65,37 @@ export default function CreateResume() {
       firstName: "",
       lastName: "",
       about: "",
-      experience: [{
-        companyName: "",
-        position: "",
-        startDate: "",
-        endDate: "",
-        description: ""
-      }]
+      experience: [
+        {
+          id: "",
+          companyName: "",
+          position: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        },
+      ],
+      skill: [
+        {
+          id: "",
+          name: "",
+          rate: "",
+        },
+      ],
+      education: [
+        {
+          id: "",
+          schoolName: "",
+          degree: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        },
+      ],
       // file: null
     },
     onSubmit: (value) => {
-      console.log(value)
+      console.log(value);
     },
   });
 
@@ -79,7 +121,7 @@ export default function CreateResume() {
                 />
               </div>
 
-               {/* <input type="file" name="file" accept="*" onChange={formik.handleChange} />
+              {/* <input type="file" name="file" accept="*" onChange={formik.handleChange} />
               <p>{ formik.errors.file }</p>  */}
             </div>
             <div className="grid grid-cols-2 gap-4 mb-4">
@@ -88,25 +130,180 @@ export default function CreateResume() {
               </div>
               <FieldArray
                 name="experience"
-                render={() => (
-                  formik.values.experience && formik.values.experience.map((exp, ind) => (
+                render={(arrayHelpers) =>
+                  formik.values.experience &&
+                  formik.values.experience.map((exp, ind) => (
                     <React.Fragment key={ind}>
-                        <InputField label="Company Name" name={`experience.${ind}.companyName`} mb="0" />
-                        <InputField label="Position" name={`experience.${ind}.position`} mb="0" />
-                        <InputField label="Start Date" name={`experience.${ind}.startDate`} mb="0" type="date" />
-                        <InputField label="End Date" name={`experience.${ind}.endDate`} mb="0" type="date" />
-                        <div className="col-start-1 col-end-3">
-                          <RichTextField
-                            name={`experience.${ind}.description`}
-                            label="Description"
-                            setFieldError={formik.setFieldError}
-                            setFieldValue={formik.setFieldValue}
-                            mb="0"
-                          />
+                      <InputField
+                        label="Company Name"
+                        name={`experience.${ind}.companyName`}
+                        mb="0"
+                      />
+                      <InputField
+                        label="Position"
+                        name={`experience.${ind}.position`}
+                        mb="0"
+                      />
+                      <InputField
+                        label="Start Date"
+                        name={`experience.${ind}.startDate`}
+                        mb="0"
+                        type="date"
+                      />
+                      <InputField
+                        label="End Date"
+                        name={`experience.${ind}.endDate`}
+                        mb="0"
+                        type="date"
+                      />
+                      <div className="col-start-1 col-end-3">
+                        <RichTextField
+                          name={`experience.${ind}.description`}
+                          label="Description"
+                          setFieldError={formik.setFieldError}
+                          setFieldValue={formik.setFieldValue}
+                          mb="0"
+                        />
+                      </div>
+                      <div className="col-start-1 col-end-3">
+                        <div className="flex flex-row gap-4">
+                          {formik.values.experience.length > 1 && (
+                            <CustomButton
+                              bgColor="bg-warning"
+                              hoverBgColor="bg-warning"
+                              text="Remove"
+                              customFn={() => arrayHelpers.remove(ind)}
+                            />
+                          )}
+                          {formik.values.experience.length - 1 === ind && (
+                            <CustomButton
+                              bgColor="bg-info"
+                              hoverBgColor="bg-info"
+                              text="Add"
+                              customFn={() =>
+                                arrayHelpers.insert(ind, {
+                                  companyName: "",
+                                  position: "",
+                                  startDate: "",
+                                  endDate: "",
+                                  description: "",
+                                })
+                              }
+                            />
+                          )}
                         </div>
+                      </div>
                     </React.Fragment>
                   ))
-                )}
+                }
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="col-start-1 col-end-3">
+                <h2>Skill</h2>
+              </div>
+              <div className="grid grid-cols-2 gap-4 col-start-1 col-end-3">
+                <SelectField
+                  name="select"
+                  label="Skill Name"
+                  options={[
+                    {
+                      value: 1,
+                      label: "test",
+                    },
+                  ]}
+                />
+                <div className="w-[100px]">
+                  <SelectField
+                    name="select"
+                    label="Rating"
+                    options={[
+                      {
+                        value: 1,
+                        label: "test",
+                      },
+                    ]}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="col-start-1 col-end-3">
+                <h2>Education</h2>
+              </div>
+              <FieldArray
+                name="education"
+                render={(arrayHelpers) =>
+                  formik.values.education &&
+                  formik.values.education.map((exp, ind) => (
+                    <React.Fragment key={ind}>
+                      <InputField
+                        label="School Name"
+                        name={`education.${ind}.schoolName`}
+                        mb="0"
+                      />
+                      <SelectField
+                        name={`education.${ind}.degree`}
+                        label="Degree"
+                        options={[
+                          {
+                            value: 1,
+                            label: "test",
+                          },
+                        ]}
+                      />
+                      <InputField
+                        label="Start Date"
+                        name={`education.${ind}.startDate`}
+                        mb="0"
+                        type="date"
+                      />
+                      <InputField
+                        label="End Date"
+                        name={`education.${ind}.endDate`}
+                        mb="0"
+                        type="date"
+                      />
+                      <div className="col-start-1 col-end-3">
+                        <RichTextField
+                          name={`education.${ind}.description`}
+                          label="Description"
+                          setFieldError={formik.setFieldError}
+                          setFieldValue={formik.setFieldValue}
+                          mb="0"
+                        />
+                      </div>
+                      <div className="col-start-1 col-end-3">
+                        <div className="flex flex-row gap-4">
+                          {formik.values.education.length > 1 && (
+                            <CustomButton
+                              bgColor="bg-warning"
+                              hoverBgColor="bg-warning"
+                              text="Remove"
+                              customFn={() => arrayHelpers.remove(ind)}
+                            />
+                          )}
+                          {formik.values.education.length - 1 === ind && (
+                            <CustomButton
+                              bgColor="bg-info"
+                              hoverBgColor="bg-info"
+                              text="Add"
+                              customFn={() =>
+                                arrayHelpers.insert(ind, {
+                                  companyName: "",
+                                  position: "",
+                                  startDate: "",
+                                  endDate: "",
+                                  description: "",
+                                })
+                              }
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  ))
+                }
               />
             </div>
             <button type="submit">Submit and log</button>
