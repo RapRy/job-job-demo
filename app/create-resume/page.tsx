@@ -38,6 +38,15 @@ const resumeSchema = Yup.object().shape({
       description: Yup.string(),
     })
   ),
+  certificate: Yup.array().of(
+    Yup.object().shape({
+      id: Yup.string(),
+      name: Yup.string().required("Required"),
+      organization: Yup.string().required("Required"),
+      date: Yup.date().required("Required"),
+      description: Yup.string(),
+    })
+  )
   // file: Yup.mixed<File>().required("Required").test('fileFormat', 'Only PDF files are allowed.', (value) => {
   //   if(value.name){
   //     const supFormat = ['pdf']
@@ -89,6 +98,15 @@ export default function CreateResume() {
           degree: "",
           startDate: "",
           endDate: "",
+          description: "",
+        },
+      ],
+      certificate: [
+        {
+          id: "",
+          name: "",
+          organization: "",
+          date: "",
           description: "",
         },
       ],
@@ -182,6 +200,7 @@ export default function CreateResume() {
                               text="Add"
                               customFn={() =>
                                 arrayHelpers.insert(ind, {
+                                  id: "",
                                   companyName: "",
                                   position: "",
                                   startDate: "",
@@ -290,10 +309,79 @@ export default function CreateResume() {
                               text="Add"
                               customFn={() =>
                                 arrayHelpers.insert(ind, {
+                                  id: "",
                                   companyName: "",
                                   position: "",
                                   startDate: "",
                                   endDate: "",
+                                  description: "",
+                                })
+                              }
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  ))
+                }
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="col-start-1 col-end-3">
+                <h2>Certicates / Trainings</h2>
+              </div>
+              <FieldArray
+                name="certificate"
+                render={(arrayHelpers) =>
+                  formik.values.certificate &&
+                  formik.values.certificate.map((exp, ind) => (
+                    <React.Fragment key={ind}>
+                      <InputField
+                        label="Name"
+                        name={`certificate.${ind}.name`}
+                        mb="0"
+                      />
+                        <InputField
+                        label="Issuing Organization"
+                        name={`certificate.${ind}.organization`}
+                        mb="0"
+                      />
+                      <InputField
+                        label="Issuing Date"
+                        name={`certificate.${ind}.date`}
+                        mb="0"
+                        type="date"
+                      />
+                      <div className="col-start-1 col-end-3">
+                        <RichTextField
+                          name={`certificate.${ind}.description`}
+                          label="Description"
+                          setFieldError={formik.setFieldError}
+                          setFieldValue={formik.setFieldValue}
+                          mb="0"
+                        />
+                      </div>
+                      <div className="col-start-1 col-end-3">
+                        <div className="flex flex-row gap-4">
+                          {formik.values.certificate.length > 1 && (
+                            <CustomButton
+                              bgColor="bg-warning"
+                              hoverBgColor="bg-warning"
+                              text="Remove"
+                              customFn={() => arrayHelpers.remove(ind)}
+                            />
+                          )}
+                          {formik.values.certificate.length - 1 === ind && (
+                            <CustomButton
+                              bgColor="bg-info"
+                              hoverBgColor="bg-info"
+                              text="Add"
+                              customFn={() =>
+                                arrayHelpers.insert(ind, {
+                                  id: "",
+                                  name: "",
+                                  organization: "",
+                                  date: "",
                                   description: "",
                                 })
                               }
