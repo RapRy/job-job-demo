@@ -118,7 +118,7 @@ export default function CreateResume() {
   });
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center bg-background">
+    <div className="h-100 w-screen flex justify-center items-center bg-background">
       <div className="bg-white max-w-4xl min-w-2xs w-full h-full p-8 lg:p-12">
         <h1>Create your Resume</h1>
         <p>
