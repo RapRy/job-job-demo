@@ -31,6 +31,7 @@ const RichTextField = ({
     setFieldError(name, "");
   };
 
+
   const modules = {
     toolbar: {
       // container: `#${label?.replaceAll(" ", "-").toLowerCase()}-container`,

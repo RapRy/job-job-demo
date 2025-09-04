@@ -11,7 +11,7 @@ import Certificate from "@/components/create-resume/Certificate";
 const resumeSchema = Yup.object().shape({
   firstName: Yup.string().required("Required."),
   lastName: Yup.string().required("Required."),
-  about: Yup.string(),
+  about: Yup.string().test("tags-error", "Required", (value) => !(value === "<p><br></p>")),
   experience: Yup.array().of(
     Yup.object().shape({
       id: Yup.string(),

@@ -40,9 +40,6 @@ const Skill = ({formik}: Props) => {
         setRating("")
     }
 
-    console.log(formik)
-    console.log(formik.values.skill)
-
   return (
     <>
         <div className="col-start-1 col-end-3">
@@ -79,6 +76,11 @@ const Skill = ({formik}: Props) => {
                     </div>
                 </div>
             </div>
+            {formik.errors.skill && 
+            <div className='grid grid-cols-2 gap-4'>
+                <p className="text-warning text-xs">Please add at least 1 skill</p>
+            </div>
+            }
             {
                 !_.isEmpty(formik.values.skill[0]?.name) &&
                     <div className='grid grid-cols-2 gap-4 mt-2'>
