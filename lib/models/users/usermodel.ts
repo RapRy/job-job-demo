@@ -36,16 +36,16 @@ const userSchema = new mongoose.Schema<UserModel>({
   name: {
     first: {
       type: String,
-      require: true,
+      required: true,
     },
     last: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   email: {
     type: String,
-    require: true,
+    required: true,
   },
   password: {
     type: String,
@@ -55,11 +55,11 @@ const userSchema = new mongoose.Schema<UserModel>({
   },
   is_google: {
     type: Boolean,
-    require: true,
+    required: true,
   },
   account_type: {
     type: String,
-    require: true,
+    required: true,
   },
   sign_up_date: {
     type: Date,

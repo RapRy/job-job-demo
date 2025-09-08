@@ -4,10 +4,10 @@ import RichTextField from '../forms/RichTextField'
 import CustomButton from '../CustomButton'
 import SelectField from '../forms/SelectField'
 import { FormikProps, FieldArray } from 'formik'
-import { ResumeProfileModel } from '@/lib/models/resume/resumemodel'
+import { ResumeProfileBaseModel } from '@/lib/models/resume/resumemodel'
 
 type Props = {
-    formik: FormikProps<ResumeProfileModel>
+    formik: FormikProps<ResumeProfileBaseModel>
 }
 
 const Education = ({ formik }: Props) => {
@@ -27,15 +27,10 @@ const Education = ({ formik }: Props) => {
                         name={`education.${ind}.schoolName`}
                         mb="0"
                       />
-                      <SelectField
+                      <InputField
                         name={`education.${ind}.degree`}
                         label="Degree"
-                        options={[
-                          {
-                            value: 1,
-                            label: "test",
-                          },
-                        ]}
+                        mb='0'
                       />
                       <InputField
                         label="Start Date"

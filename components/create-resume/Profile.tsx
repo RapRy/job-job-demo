@@ -2,10 +2,10 @@ import React from 'react'
 import InputField from '../forms/InputField'
 import RichTextField from '../forms/RichTextField'
 import { FormikProps } from 'formik'
-import { ResumeProfileModel } from '@/lib/models/resume/resumemodel'
+import { ResumeProfileBaseModel } from '@/lib/models/resume/resumemodel'
 
 type Props = {
-    formik: FormikProps<ResumeProfileModel>
+    formik: FormikProps<ResumeProfileBaseModel>
 }
 
 const Profile = ({ formik }: Props) => {

@@ -3,7 +3,7 @@ import _ from 'lodash'
 import CustomButton from '../CustomButton'
 import SelectField from '../forms/SelectField'
 import { FormikProps, FieldArray } from 'formik'
-import { ResumeProfileModel } from '@/lib/models/resume/resumemodel'
+import { ResumeProfileBaseModel } from '@/lib/models/resume/resumemodel'
 
 const optionSkill = [{
     value: "1",
@@ -14,7 +14,7 @@ const optionSkill = [{
 }]
 
 type Props = {
-    formik: FormikProps<ResumeProfileModel>
+    formik: FormikProps<ResumeProfileBaseModel>
 }
 
 const Skill = ({formik}: Props) => {

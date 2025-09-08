@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import _ from 'lodash'
 import { useFormik, FormikProvider } from "formik";
 import * as Yup from "yup";
 import Profile from "@/components/create-resume/Profile";
@@ -7,6 +8,8 @@ import Experience from "@/components/create-resume/Experience";
 import Skill from "@/components/create-resume/Skill";
 import Education from "@/components/create-resume/Education";
 import Certificate from "@/components/create-resume/Certificate";
+import { ResumeProfileBaseModel } from "@/lib/models/resume/resumemodel";
+import { useBoundStore } from "@/store/store";
 
 const resumeSchema = Yup.object().shape({
   firstName: Yup.string().required("Required."),
@@ -42,9 +45,9 @@ const resumeSchema = Yup.object().shape({
   certificate: Yup.array().of(
     Yup.object().shape({
       id: Yup.string(),
-      name: Yup.string().required("Required"),
-      organization: Yup.string().required("Required"),
-      date: Yup.date().required("Required"),
+      name: Yup.string(),
+      organization: Yup.string(),
+      date: Yup.date(),
       description: Yup.string(),
     })
   )
@@ -67,6 +70,26 @@ const resumeSchema = Yup.object().shape({
 });
 
 export default function CreateResume() {
+  const { user } = useBoundStore()
+
+  const createResumeFetch = async (values: ResumeProfileBaseModel) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/resume/create`, {
+        method: "POST", body: JSON.stringify(values)
+      })
+
+      const data = await res.json()
+
+      console.log(data)
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error.message;
+      } else {
+        throw error;
+      }
+    }
+  }
+
   const formik = useFormik({
     validationSchema: resumeSchema,
     validateOnBlur: false,
@@ -116,7 +139,14 @@ export default function CreateResume() {
       // file: null
     },
     onSubmit: (value) => {
-      console.log(value);
+      const finalData: ResumeProfileBaseModel = {
+        ...value,
+        certificate: value.certificate.filter(item => !_.isEmpty(item.name))
+      }
+      createResumeFetch({
+        ...finalData,
+        userId: user?._id ?? ""
+      })
     },
   });
 

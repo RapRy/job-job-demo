@@ -3,10 +3,10 @@ import InputField from '../forms/InputField'
 import RichTextField from '../forms/RichTextField'
 import CustomButton from '../CustomButton'
 import { FormikProps, FieldArray } from 'formik'
-import { ResumeProfileModel } from '@/lib/models/resume/resumemodel'
+import { ResumeProfileBaseModel } from '@/lib/models/resume/resumemodel'
 
 type Props = {
-    formik: FormikProps<ResumeProfileModel>
+    formik: FormikProps<ResumeProfileBaseModel>
 }
 
 const Certificate = ({ formik }: Props) => {
