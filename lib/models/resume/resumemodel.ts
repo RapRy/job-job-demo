@@ -10,7 +10,8 @@ export interface ResumeProfileBaseModel{
         position: string;
         startDate: string;
         endDate: string;
-        description: string
+        description: string;
+        isPresent: boolean
     }[];
     skill: {
         id: string;
@@ -25,7 +26,8 @@ export interface ResumeProfileBaseModel{
         degree: string;
         startDate: string;
         endDate: string;
-        description: string
+        description: string;
+        isPresent: boolean
     }[];
     certificate: {
         id: string;
@@ -81,6 +83,9 @@ const resumeProfileSchema = new mongoose.Schema<ResumeProfileBaseModel>({
             type: String,
             required: true
         },
+        isPresent: {
+            type: Boolean
+        }
     }],
     skill: [{
         id: {
@@ -126,6 +131,9 @@ const resumeProfileSchema = new mongoose.Schema<ResumeProfileBaseModel>({
             type: String,
             required: true
         },
+        isPresent: {
+            type: Boolean
+        }
     }],
     certificate: [{
         id: {

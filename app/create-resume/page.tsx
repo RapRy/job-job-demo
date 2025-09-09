@@ -23,6 +23,7 @@ const resumeSchema = Yup.object().shape({
       startDate: Yup.date().required("Required"),
       endDate: Yup.date(),
       description: Yup.string(),
+      isPresent: Yup.boolean()
     })
   ),
   skill: Yup.array().of(
@@ -40,6 +41,7 @@ const resumeSchema = Yup.object().shape({
       startDate: Yup.date().required("Required"),
       endDate: Yup.date(),
       description: Yup.string(),
+      isPresent: Yup.boolean()
     })
   ),
   certificate: Yup.array().of(
@@ -74,8 +76,19 @@ export default function CreateResume() {
 
   const createResumeFetch = async (values: ResumeProfileBaseModel) => {
     try {
+
+      const finalData: ResumeProfileBaseModel = {
+        ...values,
+        experience: values.experience.map(item => ({
+          ...item, isPresent: !_.isEmpty(item.endDate)
+        })),
+        education: values.education.map(item => ({
+          ...item, isPresent: !_.isEmpty(item.endDate),
+        }))
+      }
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/resume/create`, {
-        method: "POST", body: JSON.stringify(values)
+        method: "POST", body: JSON.stringify(finalData)
       })
 
       const data = await res.json()
@@ -106,6 +119,7 @@ export default function CreateResume() {
           startDate: "",
           endDate: "",
           description: "",
+          isPresent: false,
         },
       ],
       skill: [
@@ -125,6 +139,7 @@ export default function CreateResume() {
           startDate: "",
           endDate: "",
           description: "",
+          isPresent: false,
         },
       ],
       certificate: [
@@ -143,6 +158,7 @@ export default function CreateResume() {
         ...value,
         certificate: value.certificate.filter(item => !_.isEmpty(item.name))
       }
+      
       createResumeFetch({
         ...finalData,
         userId: user?._id ?? ""
