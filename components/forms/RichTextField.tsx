@@ -66,7 +66,7 @@ const RichTextField = ({
         meta.error ? "quill-custom-error" : ""
       }`}
     >
-      <label className="text-sm text-text-color-1 font-normal">{label}</label>
+      <label className="text-xs text-text-color-1 font-normal">{label}</label>
       <div
         // id={`${label?.replaceAll(" ", "-").toLowerCase()}-container`}
         id={name?.replaceAll(".", "-").toLowerCase()}

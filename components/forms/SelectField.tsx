@@ -27,7 +27,7 @@ const SelectField = ({ label, name, options, mb, customHandler, customValue, def
 
   return (
     <div className={`flex flex-col gap-y-2 mb-${mb ?? "5"}`}>
-      <label className="text-sm text-text-color-1 font-normal">{label}</label>
+      <label className="text-xs text-text-color-1 font-normal">{label}</label>
       <select
         name={name}
         className={`bg-white rounded-sm border h-10 px-3 text-text-color-1 font-normal text-sm ${
