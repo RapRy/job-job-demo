@@ -18,7 +18,7 @@ const InputField = ({ type, label, name, mb }: Props) => {
   return (
     <div className={`flex flex-col gap-y-2 mb-${mb ?? "5"}`}>
       <div className="flex flex-row justify-between">
-        <label className="text-sm text-text-color-1 font-normal">{label}</label>
+        <label className="text-xs text-text-color-1 font-normal">{label}</label>
         {type === "password" && (
           <div
             className="flex flex-row gap-x-1 items-center cursor-pointer "

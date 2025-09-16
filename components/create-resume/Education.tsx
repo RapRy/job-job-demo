@@ -2,7 +2,6 @@ import React from 'react'
 import InputField from '../forms/InputField'
 import RichTextField from '../forms/RichTextField'
 import CustomButton from '../CustomButton'
-import SelectField from '../forms/SelectField'
 import { FormikProps, FieldArray } from 'formik'
 import { ResumeProfileBaseModel } from '@/lib/models/resume/resumemodel'
 
@@ -14,7 +13,7 @@ const Education = ({ formik }: Props) => {
   return (
     <>
         <div className="col-start-1 col-end-3">
-                <h2>Education</h2>
+                <h2 className='custom-heading-2'>Education</h2>
               </div>
               <FieldArray
                 name="education"

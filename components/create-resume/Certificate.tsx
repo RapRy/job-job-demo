@@ -13,7 +13,7 @@ const Certificate = ({ formik }: Props) => {
   return (
     <>
         <div className="col-start-1 col-end-3">
-                <h2>Certicates / Trainings</h2>
+                <h2 className='custom-heading-2'>Certicates / Trainings</h2>
               </div>
               <FieldArray
                 name="certificate"

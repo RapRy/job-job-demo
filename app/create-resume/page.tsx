@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import _ from 'lodash'
 import { useFormik, FormikProvider } from "formik";
 import * as Yup from "yup";
@@ -8,8 +9,10 @@ import Experience from "@/components/create-resume/Experience";
 import Skill from "@/components/create-resume/Skill";
 import Education from "@/components/create-resume/Education";
 import Certificate from "@/components/create-resume/Certificate";
+import CustomButton from "@/components/CustomButton";
 import { ResumeProfileBaseModel } from "@/lib/models/resume/resumemodel";
 import { useBoundStore } from "@/store/store";
+import toast from "react-hot-toast";
 
 const resumeSchema = Yup.object().shape({
   firstName: Yup.string().required("Required."),
@@ -72,11 +75,13 @@ const resumeSchema = Yup.object().shape({
 });
 
 export default function CreateResume() {
+  const route = useRouter();
   const { user } = useBoundStore()
+  const [loading, setLoading] = useState<boolean>(false)
 
   const createResumeFetch = async (values: ResumeProfileBaseModel) => {
     try {
-
+      setLoading(true)
       const finalData: ResumeProfileBaseModel = {
         ...values,
         experience: values.experience.map(item => ({
@@ -91,22 +96,28 @@ export default function CreateResume() {
         method: "POST", body: JSON.stringify(finalData)
       })
 
-      const data = await res.json()
+      const { message } = await res.json();
 
-      console.log(data)
+      if (res.status !== 200) {
+        throw new Error(message);
+      } else {
+        return message;
+      }
     } catch (error) {
       if (error instanceof Error) {
         throw error.message;
       } else {
         throw error;
       }
+    }finally{
+      setLoading(false)
     }
   }
 
   const formik = useFormik({
     validationSchema: resumeSchema,
     validateOnBlur: false,
-    validateOnChange: false,
+    validateOnChange: true,
     initialValues: {
       firstName: "",
       lastName: "",
@@ -153,44 +164,67 @@ export default function CreateResume() {
       ],
       // file: null
     },
-    onSubmit: (value) => {
+    onSubmit: async (value) => {
       const finalData: ResumeProfileBaseModel = {
         ...value,
         certificate: value.certificate.filter(item => !_.isEmpty(item.name))
       }
-      
-      createResumeFetch({
+
+      toast.promise(createResumeFetch({
         ...finalData,
         userId: user?._id ?? ""
-      })
+      }), 
+      { 
+        loading: "Processing your Resume", 
+        success: data => {
+          return data
+        },
+        error: err => err.toString() 
+      }).then(() => route.push("/dashboard"))
+      
+      
     },
   });
 
   return (
     <div className="h-100 w-screen flex justify-center items-center bg-background">
-      <div className="bg-white max-w-4xl min-w-2xs w-full h-full p-8 lg:p-12">
-        <h1>Create your Resume</h1>
-        <p>
-          Integer ullamcorper justo tortor id vestibulum tortor molestie ac.
-        </p>
+      <div className="bg-white max-w-4xl min-w-2xs w-full h-full py-8 lg:py-12">
+        <div className="px-8 pb-8">
+          <h1 className="custom-heading-1">Create your Resume</h1>
+          <p>
+            Integer ullamcorper justo tortor id vestibulum tortor molestie ac.
+          </p>
+        </div>
+        <hr />
         <FormikProvider value={formik}>
           <form onSubmit={formik.handleSubmit}>
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              <Profile formik={formik} />
+            <div className="px-8">
+              <div className="grid grid-cols-3 gap-4 mb-8 mt-6">
+                <Profile formik={formik} />
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <Experience formik={formik} />
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <Skill formik={formik} />
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <Education formik={formik} />
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <Certificate formik={formik} />
+              </div> 
             </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <Experience formik={formik} />
+            <hr />
+            <div className="px-8 pt-8">
+              <CustomButton
+                  bgColor="bg-success"
+                  hoverBgColor="bg-success"
+                  text="Submit"
+                  loading={loading}
+                  type="submit"
+              />
             </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <Skill formik={formik} />
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <Education formik={formik} />
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <Certificate formik={formik} />
-            </div> 
-            <button type="submit">Submit and log</button>
           </form>
         </FormikProvider>
       </div>

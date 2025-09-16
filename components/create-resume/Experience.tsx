@@ -13,7 +13,7 @@ const Experience = ({ formik }: Props) => {
   return (
     <>
         <div className="col-start-1 col-end-3">
-            <h2>Experience</h2>
+            <h2 className='custom-heading-2'>Experience</h2>
         </div>
         <FieldArray
         name="experience"

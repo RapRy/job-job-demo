@@ -38,12 +38,13 @@ const Skill = ({formik}: Props) => {
 
         setSkill("")
         setRating("")
+        formik.setFieldError("skill", "")
     }
 
   return (
     <>
         <div className="col-start-1 col-end-3">
-            <h2>Skill</h2>
+            <h2 className='custom-heading-2'>Skill</h2>
             </div>
             <div className="grid grid-cols-2 gap-4 col-start-1 col-end-3">
                 <SelectField

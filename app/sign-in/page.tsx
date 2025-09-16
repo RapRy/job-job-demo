@@ -20,7 +20,7 @@ const SignInSchema = Yup.object().shape({
 
 export default function SignIn() {
   const route = useRouter();
-  const { user, setUser } = useBoundStore();
+  const { setUser } = useBoundStore();
   const [loading, setLoading] = useState<boolean>(false);
   const signInFetch = async (values: {
     email: string;

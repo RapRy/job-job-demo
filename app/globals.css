@@ -40,6 +40,10 @@ body {
   .custom-heading-1 {
     @apply text-secondary-color text-2xl font-bold mb-4;
   }
+
+  .custom-heading-2{
+    @apply text-secondary-color text-lg font-bold
+  }
 }
 
 .quill-custom .ql-toolbar.ql-snow {
