@@ -13,6 +13,7 @@ import CustomButton from "@/components/CustomButton";
 import { ResumeProfileBaseModel } from "@/lib/models/resume/resumemodel";
 import { useBoundStore } from "@/store/store";
 import toast from "react-hot-toast";
+import { UserCredModel } from "@/lib/models/users/usermodel";
 
 const resumeSchema = Yup.object().shape({
   firstName: Yup.string().required("Required."),
@@ -76,7 +77,7 @@ const resumeSchema = Yup.object().shape({
 
 export default function CreateResume() {
   const route = useRouter();
-  const { user } = useBoundStore()
+  const { user, setUser } = useBoundStore()
   const [loading, setLoading] = useState<boolean>(false)
 
   const createResumeFetch = async (values: ResumeProfileBaseModel) => {
@@ -101,6 +102,15 @@ export default function CreateResume() {
       if (res.status !== 200) {
         throw new Error(message);
       } else {
+        const updateUser:UserCredModel = {
+          ...user!,
+          name: {
+            first: finalData.firstName,
+            last: finalData.lastName,
+          },
+          is_resume_created: true
+        }
+        setUser(updateUser)
         return message;
       }
     } catch (error) {
@@ -180,7 +190,10 @@ export default function CreateResume() {
           return data
         },
         error: err => err.toString() 
-      }).then(() => route.push("/dashboard"))
+      }).then(() => {
+        console.log(user?.name.first.toLowerCase().replaceAll(" ", "-"))
+        route.push(`/${finalData.firstName.toLowerCase().replaceAll(" ", "-")}`)
+      })
       
       
     },

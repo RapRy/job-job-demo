@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
-      { last_sign_in_date: new Date(), step: user.step ?? 1 },
+      { last_sign_in_date: new Date() },
       { useFindAndModify: false, new: true }
     );
 

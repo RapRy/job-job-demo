@@ -1,5 +1,6 @@
 import { connectToMongoDB } from "@/lib/db";
 import Resume, { ResumeProfileBaseModel } from "@/lib/models/resume/resumemodel";
+import User from "@/lib/models/users/usermodel";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest){
@@ -31,6 +32,13 @@ export async function POST(req: NextRequest){
         }
 
         await Resume.create(finalData)
+
+        await User.findByIdAndUpdate(userId, { 
+            is_resume_created: true, 
+            name: {
+                first: data.firstName, last: data.lastName
+            }
+        })
 
         return new NextResponse(JSON.stringify({
             message: `Your resume has been successfully created.`

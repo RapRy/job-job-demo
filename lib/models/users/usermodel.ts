@@ -12,7 +12,7 @@ export interface UserModel extends Document {
   sign_up_date: Date;
   last_sign_in_date: Date;
   is_google: boolean;
-  step: number;
+  is_resume_created: boolean;
 }
 
 export interface UserCredModel {
@@ -27,7 +27,7 @@ export interface UserCredModel {
   sign_up_date: Date;
   last_sign_in_date: Date;
   is_google: boolean;
-  step: number;
+  is_resume_created: boolean;
   _id: string;
   token: string;
 }
@@ -67,8 +67,8 @@ const userSchema = new mongoose.Schema<UserModel>({
   last_sign_in_date: {
     type: Date,
   },
-  step: {
-    type: Number,
+  is_resume_created: {
+    type: Boolean,
   },
 });
 
