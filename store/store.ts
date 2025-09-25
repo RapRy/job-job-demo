@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { createUserSlice, UserSlice } from "./userslice";
+import { createNavigationSlice, NavigationSlice } from "./navigationslice";
 
-export const useBoundStore = create<UserSlice>()(
+export const useUserStore = create<UserSlice>()(
   devtools(
     persist(
       (...a) => ({
@@ -14,3 +15,5 @@ export const useBoundStore = create<UserSlice>()(
     )
   )
 );
+
+export const useNavigationStore = create<NavigationSlice>()(devtools((...a) => ({...createNavigationSlice(...a)})))

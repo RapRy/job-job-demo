@@ -11,7 +11,7 @@ import Education from "@/components/create-resume/Education";
 import Certificate from "@/components/create-resume/Certificate";
 import CustomButton from "@/components/CustomButton";
 import { ResumeProfileBaseModel } from "@/lib/models/resume/resumemodel";
-import { useBoundStore } from "@/store/store";
+import { useUserStore } from "@/store/store";
 import toast from "react-hot-toast";
 import { UserCredModel } from "@/lib/models/users/usermodel";
 
@@ -77,7 +77,7 @@ const resumeSchema = Yup.object().shape({
 
 export default function CreateResume() {
   const route = useRouter();
-  const { user, setUser } = useBoundStore()
+  const { user, setUser } = useUserStore()
   const [loading, setLoading] = useState<boolean>(false)
 
   const createResumeFetch = async (values: ResumeProfileBaseModel) => {

@@ -11,7 +11,7 @@ import * as Yup from "yup";
 import { useGoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 import { UserCredModel } from "@/lib/models/users/usermodel";
-import { useBoundStore } from "@/store/store";
+import { useUserStore } from "@/store/store";
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required."),
@@ -20,7 +20,7 @@ const SignInSchema = Yup.object().shape({
 
 export default function SignIn() {
   const route = useRouter();
-  const { setUser } = useBoundStore();
+  const { setUser } = useUserStore();
   const [loading, setLoading] = useState<boolean>(false);
   const signInFetch = async (values: {
     email: string;
