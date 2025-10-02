@@ -1,14 +1,42 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { BellIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import { useUserStore, useNavigationStore } from '@/store/store'
+import Link from 'next/link'
+import { hypenizedLowerCased } from '@/lib/helpers'
+import { applicationsRoute, profileRoute } from '@/lib/constants'
 
 
 const UserTopHeader = () => {
     const { user } = useUserStore()
     const { showSideBar, setShowSideBar } = useNavigationStore()
     const [userMenu, setUserMenu] = useState<boolean>(false)
+    const [exitTransition, setExitTransition] = useState<boolean>(true)
+    const [mountTrigger, setMountTrigger] = useState<boolean>(false)
+    const userLink: string = user ? `/${hypenizedLowerCased(user.name.first)}` : "/"
+
+    const handleShowUserMenu = () => {
+        if(!mountTrigger){
+            setUserMenu(true)
+        }
+        setMountTrigger(state => !state)
+    }
+
+    useEffect(() => {
+        let timeout: ReturnType<typeof setTimeout> = setTimeout(() => {}, 500) 
+
+        if(mountTrigger){
+            setExitTransition(false)
+        }else{
+            setExitTransition(true)
+            timeout = setTimeout(() => {
+                setUserMenu(false)
+            }, 500)
+        }
+
+        return () => clearTimeout(timeout)
+    }, [mountTrigger])
 
   return (
     <nav className="bg-gray-50 border-gray-200 dark:bg-gray-900 border-b relative z-10">
@@ -41,23 +69,25 @@ const UserTopHeader = () => {
                     <a href="#">
                         <BellIcon className='size-6' />
                     </a>
-                    <button type="button" className="flex text-sm bg-gray-800 rounded-full md:me-0" id="user-menu-button" aria-expanded={userMenu} data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom" onClick={() => setUserMenu(state => !state)}>
+                    <button type="button" className="flex text-sm bg-gray-800 rounded-full md:me-0" id="user-menu-button" aria-expanded={userMenu} data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom" onClick={handleShowUserMenu}>
                         <span className="sr-only">Open user menu</span>
                         <Image className="w-8 h-8 rounded-full" src="https://picsum.photos/id/64/300/300" alt="user photo" height={32} width={32} priority />
                     </button>
-                </div>
-                {userMenu &&
-                    <div className={`z-50 absolute -right-4 top-[45px] my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600`} id="user-dropdown">
+                </div>     
+                {
+                    userMenu &&
+                        
+                    <div className={`z-50 absolute ${exitTransition ? "-right-[500px]" : "-right-4" } top-[45px] my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600 transition-all duration-500 ease-linear`} id="user-dropdown" >
                         <div className="px-4 py-3">
                             <span className="block text-sm text-gray-900 dark:text-white">{`${user?.name.first} ${user?.name.last}`}</span>
                             <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">{user?.email}</span>
                         </div>
                         <ul className="py-2" aria-labelledby="user-menu-button">
                             <li>
-                                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
+                                <Link href={`${userLink}${profileRoute}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</Link>
                             </li>
                             <li>
-                                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Applications</a>
+                                <Link href={`${userLink}${applicationsRoute}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Applications</Link>
                             </li>
                             <li>
                                 <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log Out</a>

@@ -4,3 +4,7 @@ export function convertBoolToPresentText(isPresent: boolean): string{
 
     return ""
 }
+
+export function hypenizedLowerCased(value: any): string{
+    return String(value).toLowerCase().replaceAll(" ", "-")
+}

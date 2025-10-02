@@ -9,7 +9,7 @@ export default function RootLayout({
 }>) {
 
   return (
-    <div className="Main">
+    <div className="Main overflow-x-hidden">
         <UserTopHeader />
         <div className="flex gap-3">
             <UserAside />

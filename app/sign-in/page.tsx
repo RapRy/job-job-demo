@@ -12,6 +12,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 import { UserCredModel } from "@/lib/models/users/usermodel";
 import { useUserStore } from "@/store/store";
+import { hypenizedLowerCased } from "@/lib/helpers";
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string().email().required("Email is required."),
@@ -68,8 +69,12 @@ export default function SignIn() {
           success: (data) => `Authenticated as ${data.email}`,
           error: (err) => err.toString(),
         })
-        .then(() => {
-          route.push("/create-resume");
+        .then((data) => {
+          if(data.is_resume_created){
+            route.push(`/${hypenizedLowerCased(data.name.first)}`)
+          }else{
+            route.push("/create-resume");
+          }
         });
     },
   });

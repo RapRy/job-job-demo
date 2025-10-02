@@ -1,0 +1,5 @@
+export const calendarRoute = "/calendar"
+export const profileRoute = "/profile"
+export const applicationsRoute = "/applications"
+export const contactsRoute = "/contacts"
+export const feedsRoute = "/feeds"
